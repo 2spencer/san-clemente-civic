@@ -1,1 +1,366 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budget — San Clemente Civic</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --ocean: #0d4f6b;
+  --deep: #083445;
+  --sand: #f4e8d0;
+  --seafoam: #7eb8a8;
+  --foam: #e8f4f0;
+  --text: #1a2e35;
+  --muted: #5a6f76;
+  --accent: #2a7a9b;
+  --card: #ffffff;
+  --border: #d4e4e8;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--sand); color: var(--text); font-family: 'Inter', system-ui, sans-serif; line-height: 1.5; }
+h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; margin: 0 0 0.5em; color: var(--ocean); }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+header { background: var(--ocean); color: white; padding: 1.25rem 1.25rem 0.75rem; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+header h1 { color: white; margin: 0; }
+header p { margin: 0.25rem 0 0.75rem; opacity: 0.9; font-size: 0.95rem; }
+.container { max-width: 1100px; margin: 0 auto; padding: 1.25rem; }
+nav { display: flex; gap: 0.5rem; flex-wrap: wrap; padding-bottom: 0.75rem; }
+nav a { color: white; font-weight: 500; padding: 0.45rem 0.9rem; border-radius: 20px; background: rgba(255,255,255,0.12); }
+nav a.active, nav a:hover { background: var(--seafoam); color: var(--deep); }
+.section { margin: 2rem 0; }
+.card { background: var(--card); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(13,79,107,0.06); }
+.tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.tab { padding: 0.5rem 1rem; border-radius: 20px; background: var(--foam); border: none; cursor: pointer; font-weight: 500; color: var(--ocean); }
+.tab.active { background: var(--ocean); color: white; }
+.grid { display: grid; gap: 1rem; }
+@media (min-width: 800px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+.stat { font-size: 1.6rem; font-weight: 600; color: var(--ocean); }
+.muted { color: var(--muted); font-size: 0.9rem; }
+.clickable { cursor: pointer; transition: background 0.15s; }
+.clickable:hover { background: var(--foam); }
+.breadcrumb { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; font-size: 0.95rem; }
+.breadcrumb button { background: none; border: none; color: var(--accent); cursor: pointer; font-weight: 500; padding: 0; }
+.breadcrumb button:hover { text-decoration: underline; }
+.breadcrumb .current { font-weight: 600; color: var(--ocean); }
+table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+th, td { padding: 0.6rem 0.5rem; text-align: left; border-bottom: 1px solid var(--border); }
+th { color: var(--ocean); font-weight: 600; }
+footer { text-align: center; padding: 2rem 1rem; color: #c8d8dc; font-size: 0.85rem; background: var(--deep); margin-top: 3rem; }
+canvas { max-height: 320px; }
+.page-note { background: var(--foam); border-left: 4px solid var(--seafoam); padding: 0.75rem 1rem; border-radius: 6px; margin: 1rem 0; }
+.back-btn { background: var(--foam); border: none; padding: 0.4rem 0.8rem; border-radius: 16px; cursor: pointer; font-weight: 500; color: var(--ocean); margin-bottom: 0.75rem; }
+.back-btn:hover { background: var(--seafoam); }
+</style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <h1>San Clemente Civic</h1>
+    <p>Budget Explorer</p>
+    <nav>
+      <a href="index.html" class="active">Budget</a>
+      <a href="#" onclick="alert('Projects page coming next'); return false;">Projects</a>
+      <a href="#" onclick="alert('Events page coming later'); return false;">Events</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <section class="section">
+    <h2>General Fund Budget</h2>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="muted">FY 2026 Estimated Revenues</div>
+        <div class="stat">~$89.8M</div>
+      </div>
+      <div class="card">
+        <div class="muted">FY 2026 Estimated Expenditures</div>
+        <div class="stat">~$99M</div>
+        <div class="muted">Includes carryovers</div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab" data-view="revenue">Revenues</button>
+      <button class="tab active" data-view="expenditures">Expenditures</button>
+    </div>
+
+    <!-- REVENUE VIEW -->
+    <div id="revenue-view" style="display:none;">
+      <div class="card">
+        <h3>Revenues Over Time (Stacked)</h3>
+        <canvas id="revMultiChart"></canvas>
+        <p class="muted" style="margin-top:0.5rem;">Click a bar segment for details</p>
+      </div>
+      <div class="card">
+        <h3>FY 2026 Revenue Breakdown</h3>
+        <table>
+          <tr><th>Category</th><th>Approx.</th><th></th></tr>
+          <tr class="clickable" data-detail="prop"><td>Property Tax</td><td>$48.2M</td><td>→</td></tr>
+          <tr class="clickable" data-detail="sales"><td>Sales Tax</td><td>$13.2M</td><td>→</td></tr>
+          <tr class="clickable" data-detail="other-tax"><td>Other Taxes / TOT</td><td>~$7.2M</td><td>→</td></tr>
+          <tr class="clickable" data-detail="services"><td>Service Charges</td><td>~$7.6M</td><td>→</td></tr>
+          <tr class="clickable" data-detail="other-rev"><td>Interfund & Other</td><td>~$13.6M</td><td>→</td></tr>
+        </table>
+        <div id="detail-prop" class="detail-panel" style="display:none;"><strong>Property Tax</strong><br>Largest single revenue source. Includes secured and unsecured. Distributions typically December and April.</div>
+        <div id="detail-sales" class="detail-panel" style="display:none;"><strong>Sales Tax</strong><br>Bradley-Burns and local measures. Sensitive to tourism, retail, and outlet activity.</div>
+        <div id="detail-other-tax" class="detail-panel" style="display:none;"><strong>Other Taxes / TOT</strong><br>Transient Occupancy Tax (hotel), business license, and minor taxes.</div>
+        <div id="detail-services" class="detail-panel" style="display:none;"><strong>Service Charges</strong><br>Recreation programs, permits, public works fees, and other user fees.</div>
+        <div id="detail-other-rev" class="detail-panel" style="display:none;"><strong>Interfund & Other</strong><br>Transfers, interest, rents, and miscellaneous.</div>
+      </div>
+    </div>
+
+    <!-- EXPENDITURE VIEW with hierarchical drill-down -->
+    <div id="expenditures-view">
+      <div class="card">
+        <div class="breadcrumb" id="exp-breadcrumb">
+          <span class="current">All Departments</span>
+        </div>
+        <button class="back-btn" id="exp-back" style="display:none;">← Back</button>
+        <h3 id="exp-chart-title">Expenditures Over Time (Stacked)</h3>
+        <canvas id="expMultiChart"></canvas>
+        <p class="muted" style="margin-top:0.5rem;">Click a bar segment or table row to drill down</p>
+      </div>
+      <div class="card">
+        <h3 id="exp-table-title">Breakdown</h3>
+        <table id="exp-table">
+          <thead><tr><th>Category</th><th>FY 2026</th><th></th></tr></thead>
+          <tbody id="exp-tbody"></tbody>
+        </table>
+        <div id="exp-detail" class="detail-panel" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Sources & Notes</h3>
+      <p>Data drawn from City of San Clemente quarterly financial reports and the ACFR. Hierarchy is illustrative of the San Diego OpenGov pattern (department → program → line item). Deeper levels use reasonable splits of published totals. A production version would use structured open data.</p>
+    </div>
+  </section>
+</div>
+
+<footer>
+  San Clemente Civic · Budget Explorer Prototype · Public data only · Not an official city site
+</footer>
+
+<script>
+// Tab switching
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const view = tab.dataset.view;
+    document.getElementById('revenue-view').style.display = view === 'revenue' ? 'block' : 'none';
+    document.getElementById('expenditures-view').style.display = view === 'expenditures' ? 'block' : 'none';
+  });
+});
+
+// Revenue click details
+document.querySelectorAll('#revenue-view .clickable').forEach(row => {
+  row.addEventListener('click', () => {
+    const id = 'detail-' + row.dataset.detail;
+    const panel = document.getElementById(id);
+    document.querySelectorAll('#revenue-view .detail-panel').forEach(p => p.style.display = 'none');
+    if (panel) panel.style.display = 'block';
+  });
+});
+
+// Hierarchical expenditure data (illustrative multi-year $M)
+const hierarchy = {
+  root: {
+    name: 'All Departments',
+    children: [
+      { id: 'police', name: 'Police', values: [21.5, 22.2, 22.8, 23.1, 23.9], children: [
+        { id: 'police-contract', name: 'Contracted Services', values: [18, 18.5, 19, 19.2, 19.8], children: [
+          { id: 'police-patrol', name: 'Patrol Services', values: [12, 12.3, 12.6, 12.7, 13.1] },
+          { id: 'police-detect', name: 'Investigations & Support', values: [4.5, 4.6, 4.7, 4.8, 4.9] },
+          { id: 'police-admin-svc', name: 'Administrative Services', values: [1.5, 1.6, 1.7, 1.7, 1.8] }
+        ]},
+        { id: 'police-admin', name: 'Administration & Support', values: [2.5, 2.6, 2.7, 2.8, 2.9] },
+        { id: 'police-other', name: 'Other Police', values: [1, 1.1, 1.1, 1.1, 1.2] }
+      ]},
+      { id: 'fire', name: 'Fire', values: [13.8, 14.2, 14.6, 14.7, 15.3], children: [
+        { id: 'fire-contract', name: 'Contracted Services', values: [12.5, 12.8, 13.1, 13.2, 13.7] },
+        { id: 'fire-other', name: 'Other Fire', values: [1.3, 1.4, 1.5, 1.5, 1.6] }
+      ]},
+      { id: 'pw', name: 'Public Works', values: [22, 23.5, 25, 26, 26.9], children: [
+        { id: 'pw-eng', name: 'Engineering', values: [6, 6.5, 7, 7.2, 7.5], children: [
+          { id: 'pw-eng-design', name: 'Design & Plan Review', values: [3.2, 3.4, 3.6, 3.7, 3.8] },
+          { id: 'pw-eng-inspect', name: 'Inspection & Construction Mgmt', values: [2.8, 3.1, 3.4, 3.5, 3.7] }
+        ]},
+        { id: 'pw-maint', name: 'Maintenance & Operations', values: [10, 10.5, 11, 11.5, 12], children: [
+          { id: 'pw-maint-building', name: 'Building Maintenance', values: [3.5, 3.7, 3.9, 4.0, 4.2] },
+          { id: 'pw-maint-street', name: 'Street Maintenance', values: [4.0, 4.2, 4.4, 4.6, 4.8] },
+          { id: 'pw-maint-park', name: 'Park & Facility Maintenance', values: [2.5, 2.6, 2.7, 2.9, 3.0] }
+        ]},
+        { id: 'pw-streets', name: 'Streets & Infrastructure', values: [6, 6.5, 7, 7.3, 7.4], children: [
+          { id: 'pw-streets-paving', name: 'Paving & Resurfacing', values: [3.5, 3.8, 4.1, 4.2, 4.3] },
+          { id: 'pw-streets-drainage', name: 'Drainage & Stormwater', values: [2.5, 2.7, 2.9, 3.1, 3.1] }
+        ]}
+      ]},
+      { id: 'cd', name: 'Community Development', values: [8.5, 9, 9.5, 9.8, 10], children: [
+        { id: 'cd-planning', name: 'Planning', values: [3.5, 3.7, 3.9, 4, 4.1], children: [
+          { id: 'cd-planning-current', name: 'Current Planning', values: [2.0, 2.1, 2.2, 2.3, 2.3] },
+          { id: 'cd-planning-long', name: 'Long Range Planning', values: [1.5, 1.6, 1.7, 1.7, 1.8] }
+        ]},
+        { id: 'cd-building', name: 'Building & Permits', values: [3, 3.2, 3.4, 3.5, 3.6] },
+        { id: 'cd-code', name: 'Code Compliance', values: [2, 2.1, 2.2, 2.3, 2.3] }
+      ]},
+      { id: 'bpr', name: 'Beaches, Parks & Recreation', values: [5.8, 6.1, 6.4, 6.6, 6.8], children: [
+        { id: 'bpr-beaches', name: 'Beaches & Marine Safety', values: [2.2, 2.3, 2.4, 2.4, 2.5] },
+        { id: 'bpr-parks', name: 'Parks Maintenance', values: [2.5, 2.6, 2.7, 2.8, 2.9] },
+        { id: 'bpr-rec', name: 'Recreation Programs', values: [1.1, 1.2, 1.3, 1.4, 1.4] }
+      ]},
+      { id: 'other', name: 'General Government / Other', values: [14, 14.5, 15, 15.5, 16], children: [
+        { id: 'other-admin', name: 'City Manager & Council', values: [4, 4.2, 4.3, 4.4, 4.5], children: [
+          { id: 'other-admin-cm', name: 'City Manager Office', values: [2.2, 2.3, 2.4, 2.4, 2.5] },
+          { id: 'other-admin-council', name: 'City Council', values: [1.0, 1.0, 1.0, 1.1, 1.1] },
+          { id: 'other-admin-clerk', name: 'City Clerk', values: [0.8, 0.9, 0.9, 0.9, 0.9] }
+        ]},
+        { id: 'other-finance', name: 'Finance & Admin', values: [5, 5.2, 5.4, 5.5, 5.7], children: [
+          { id: 'other-finance-acct', name: 'Accounting & Budget', values: [2.5, 2.6, 2.7, 2.7, 2.8] },
+          { id: 'other-finance-hr', name: 'Human Resources', values: [1.5, 1.6, 1.6, 1.7, 1.7] },
+          { id: 'other-finance-it', name: 'Information Technology', values: [1.0, 1.0, 1.1, 1.1, 1.2] }
+        ]},
+        { id: 'other-rest', name: 'Other Central Services', values: [5, 5.1, 5.3, 5.6, 5.8], children: [
+          { id: 'other-rest-econ', name: 'Economic Development', values: [1.2, 1.2, 1.3, 1.4, 1.4] },
+          { id: 'other-rest-marine', name: 'Marine Safety (central)', values: [1.8, 1.9, 1.9, 2.0, 2.1] },
+          { id: 'other-rest-misc', name: 'Miscellaneous Central', values: [2.0, 2.0, 2.1, 2.2, 2.3] }
+        ]}
+      ]}
+    ]
+  }
+};
+
+let currentPath = [];
+let expChart = null;
+
+function getNodeByPath(path) {
+  let node = hierarchy.root;
+  for (const id of path) {
+    node = (node.children || []).find(c => c.id === id);
+    if (!node) return hierarchy.root;
+  }
+  return node;
+}
+
+function renderExpenditureLevel() {
+  const node = getNodeByPath(currentPath);
+  const children = node.children || [];
+  const years = ['FY22', 'FY23', 'FY24', 'FY25', 'FY26'];
+
+  const bc = document.getElementById('exp-breadcrumb');
+  bc.innerHTML = '';
+  const rootBtn = document.createElement('button');
+  rootBtn.textContent = 'All Departments';
+  rootBtn.onclick = () => { currentPath = []; renderExpenditureLevel(); };
+  bc.appendChild(rootBtn);
+  currentPath.forEach((id, idx) => {
+    bc.appendChild(document.createTextNode(' / '));
+    const btn = document.createElement('button');
+    btn.textContent = getNodeByPath(currentPath.slice(0, idx+1)).name;
+    btn.onclick = () => { currentPath = currentPath.slice(0, idx+1); renderExpenditureLevel(); };
+    bc.appendChild(btn);
+  });
+  if (currentPath.length === 0) {
+    bc.innerHTML = '<span class="current">All Departments</span>';
+  }
+
+  document.getElementById('exp-back').style.display = currentPath.length ? 'inline-block' : 'none';
+  document.getElementById('exp-chart-title').textContent = (node.name === 'All Departments' ? 'Expenditures' : node.name) + ' Over Time';
+  document.getElementById('exp-table-title').textContent = 'Broken down by ' + (node.name === 'All Departments' ? 'Department' : 'Program');
+
+  const tbody = document.getElementById('exp-tbody');
+  tbody.innerHTML = '';
+  children.forEach(child => {
+    const tr = document.createElement('tr');
+    tr.className = 'clickable';
+    const fy26 = child.values ? child.values[child.values.length-1] : 0;
+    tr.innerHTML = `<td>${child.name}</td><td>$${fy26.toFixed(1)}M</td><td>→</td>`;
+    tr.onclick = () => {
+      if (child.children && child.children.length) {
+        currentPath.push(child.id);
+        renderExpenditureLevel();
+      } else {
+        const detail = document.getElementById('exp-detail');
+        detail.style.display = 'block';
+        detail.innerHTML = `<strong>${child.name}</strong><br>Approximate FY 2026: $${fy26.toFixed(1)}M. Multi-year trend: ${child.values.map((v,i) => years[i]+': $'+v+'M').join(', ')}.`;
+      }
+    };
+    tbody.appendChild(tr);
+  });
+
+  if (expChart) expChart.destroy();
+  const datasets = children.map((child, i) => ({
+    label: child.name,
+    data: child.values || [],
+    backgroundColor: ['#0d4f6b','#2a7a9b','#7eb8a8','#a8d4c8','#c5d8dc','#d4e4e8'][i % 6],
+    stack: 'exp'
+  }));
+  expChart = new Chart(document.getElementById('expMultiChart'), {
+    type: 'bar',
+    data: { labels: years, datasets },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels: { color: '#1a2e35' } },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': $' + ctx.raw + 'M' } }
+      },
+      scales: {
+        x: { stacked: true, ticks: { color: '#5a6f76' }, grid: { display: false } },
+        y: { stacked: true, ticks: { color: '#5a6f76' }, grid: { color: '#e8f4f0' }, title: { display: true, text: '$ Millions' } }
+      },
+      onClick: (e, elements) => {
+        if (elements.length && children[elements[0].datasetIndex]) {
+          const child = children[elements[0].datasetIndex];
+          if (child.children && child.children.length) {
+            currentPath.push(child.id);
+            renderExpenditureLevel();
+          }
+        }
+      }
+    }
+  });
+
+  document.getElementById('exp-detail').style.display = 'none';
+}
+
+document.getElementById('exp-back').onclick = () => {
+  if (currentPath.length) {
+    currentPath.pop();
+    renderExpenditureLevel();
+  }
+};
+
+// Revenue chart
+const years = ['FY22', 'FY23', 'FY24', 'FY25', 'FY26'];
+new Chart(document.getElementById('revMultiChart'), {
+  type: 'bar',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'Property Tax', data: [42, 44, 45, 46.3, 48.2], backgroundColor: '#0d4f6b', stack: 'rev' },
+      { label: 'Sales Tax', data: [12.5, 13.0, 13.1, 12.8, 13.2], backgroundColor: '#2a7a9b', stack: 'rev' },
+      { label: 'Other Taxes/TOT', data: [6.5, 6.8, 7.0, 7.1, 7.2], backgroundColor: '#7eb8a8', stack: 'rev' },
+      { label: 'Services & Other', data: [18, 19, 20, 22, 21.2], backgroundColor: '#a8d4c8', stack: 'rev' }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { labels: { color: '#1a2e35' } }, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': $' + ctx.raw + 'M' } } },
+    scales: {
+      x: { stacked: true, ticks: { color: '#5a6f76' }, grid: { display: false } },
+      y: { stacked: true, ticks: { color: '#5a6f76' }, grid: { color: '#e8f4f0' }, title: { display: true, text: '$ Millions' } }
+    }
+  }
+});
+
+// Initialize expenditure view
+renderExpenditureLevel();
+</script>
+</body>
+</html>
