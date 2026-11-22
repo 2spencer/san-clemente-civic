@@ -1,1 +1,369 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budget — San Clemente Civic</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --ocean: #0d4f6b;
+  --deep: #083445;
+  --sand: #f4e8d0;
+  --seafoam: #7eb8a8;
+  --foam: #e8f4f0;
+  --text: #1a2e35;
+  --muted: #5a6f76;
+  --accent: #2a7a9b;
+  --card: #ffffff;
+  --border: #d4e4e8;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--sand);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.5;
+}
+h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; margin: 0 0 0.5em; color: var(--ocean); }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+header {
+  background: var(--ocean);
+  color: white;
+  padding: 1.25rem 1.25rem 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+header h1 { color: white; margin: 0; }
+header p { margin: 0.25rem 0 0.75rem; opacity: 0.9; font-size: 0.95rem; }
+.container { max-width: 1100px; margin: 0 auto; padding: 1.25rem; }
+nav { display: flex; gap: 0.5rem; flex-wrap: wrap; padding-bottom: 0.75rem; }
+nav a { color: white; font-weight: 500; padding: 0.45rem 0.9rem; border-radius: 20px; background: rgba(255,255,255,0.12); }
+nav a.active, nav a:hover { background: var(--seafoam); color: var(--deep); }
+.section { margin: 2rem 0; }
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(13,79,107,0.06);
+}
+.tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.tab {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  background: var(--foam);
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--ocean);
+}
+.tab.active { background: var(--ocean); color: white; }
+.grid { display: grid; gap: 1rem; }
+@media (min-width: 800px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+.stat { font-size: 1.6rem; font-weight: 600; color: var(--ocean); }
+.muted { color: var(--muted); font-size: 0.9rem; }
+.clickable { cursor: pointer; transition: background 0.15s; }
+.clickable:hover { background: var(--foam); }
+.detail-panel {
+  background: var(--foam);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 0.75rem;
+  display: none;
+}
+.detail-panel.show { display: block; }
+table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+th, td { padding: 0.6rem 0.5rem; text-align: left; border-bottom: 1px solid var(--border); }
+th { color: var(--ocean); font-weight: 600; }
+footer { text-align: center; padding: 2rem 1rem; color: #c8d8dc; font-size: 0.85rem; background: var(--deep); margin-top: 3rem; }
+canvas { max-height: 280px; }
+.page-note { background: var(--foam); border-left: 4px solid var(--seafoam); padding: 0.75rem 1rem; border-radius: 6px; margin: 1rem 0; }
+</style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <h1>San Clemente Civic</h1>
+    <p>Budget Explorer</p>
+    <nav>
+      <a href="index.html" class="active">Budget</a>
+      <a href="#" onclick="alert('Projects page coming next'); return false;">Projects</a>
+      <a href="#" onclick="alert('Events page coming later'); return false;">Events</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <section class="section">
+    <h2>General Fund Budget</h2>
+    <div class="page-note">
+      Click any category in the charts or tables to drill into more detail. Figures are rounded estimates from public quarterly reports and the FY 2025 ACFR. Not official.
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="muted">FY 2026 Estimated Revenues</div>
+        <div class="stat">~$89.8M</div>
+      </div>
+      <div class="card">
+        <div class="muted">FY 2026 Estimated Expenditures</div>
+        <div class="stat">~$99M</div>
+        <div class="muted">Includes carryovers</div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-view="revenue">Revenues</button>
+      <button class="tab" data-view="expenditures">Expenditures</button>
+    </div>
+
+    <!-- REVENUE VIEW -->
+    <div id="revenue-view">
+      <div class="card">
+        <h3>Revenue Sources</h3>
+        <canvas id="revenueChart"></canvas>
+        <p class="muted" style="margin-top:0.5rem;">Click a slice for details</p>
+      </div>
+      <div class="card">
+        <h3>Revenue Breakdown</h3>
+        <table>
+          <tr><th>Category</th><th>Approx.</th><th></th></tr>
+          <tr class="clickable" data-detail="prop">
+            <td>Property Tax</td><td>$48.2M</td><td>→</td>
+          </tr>
+          <tr class="clickable" data-detail="sales">
+            <td>Sales Tax</td><td>$13.2M</td><td>→</td>
+          </tr>
+          <tr class="clickable" data-detail="other-tax">
+            <td>Other Taxes / TOT</td><td>~$7.2M</td><td>→</td>
+          </tr>
+          <tr class="clickable" data-detail="services">
+            <td>Service Charges</td><td>~$7.6M</td><td>→</td>
+          </tr>
+          <tr class="clickable" data-detail="other-rev">
+            <td>Interfund & Other</td><td>~$13.6M</td><td>→</td>
+          </tr>
+        </table>
+        <div id="detail-prop" class="detail-panel">
+          <strong>Property Tax</strong><br>
+          Largest single revenue source. Includes secured and unsecured property taxes. Distributions typically arrive in December and April. Recent years have shown steady growth tied to local development and assessed values.
+        </div>
+        <div id="detail-sales" class="detail-panel">
+          <strong>Sales Tax</strong><br>
+          Primarily local Bradley-Burns and Measure-related sales tax. Sensitive to tourism, retail, and outlet activity. Recent reports show modest fluctuations year-over-year.
+        </div>
+        <div id="detail-other-tax" class="detail-panel">
+          <strong>Other Taxes / Transient Occupancy Tax</strong><br>
+          Includes Transient Occupancy Tax (hotel tax), business license tax, and other minor tax sources. TOT is driven by lodging occupancy and rates.
+        </div>
+        <div id="detail-services" class="detail-panel">
+          <strong>Service Charges</strong><br>
+          Fees for services such as recreation programs, building permits, public works services, and other user fees. More variable than tax revenue.
+        </div>
+        <div id="detail-other-rev" class="detail-panel">
+          <strong>Interfund Transfers & Other</strong><br>
+          Includes transfers from other funds (overhead charges, reimbursements) plus interest, rents, and miscellaneous revenue. These can swing based on capital project timing and investment performance.
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPENDITURE VIEW -->
+    <div id="expenditures-view" style="display:none;">
+      <div class="card">
+        <h3>Expenditures by Type</h3>
+        <canvas id="expChart"></canvas>
+        <p class="muted" style="margin-top:0.5rem;">Click a bar for details</p>
+      </div>
+      <div class="card">
+        <h3>Expenditure Breakdown by Type</h3>
+        <table>
+          <tr><th>Category</th><th>Approx.</th><th></th></tr>
+          <tr class="clickable" data-detail="contract">
+            <td>Contractual Services</td><td>$54.1M</td><td>→</td>
+          </tr>
+          <tr class="clickable" data-detail="personnel">
+            <td>Salaries + Benefits</td><td>$24.0M</td><td>→</td>
+          </tr>
+          <tr class="clickable" data-detail="capital">
+            <td>Capital Outlay</td><td>$7.5M</td><td>→</td>
+          </tr>
+          <tr class="clickable" data-detail="inter">
+            <td>Interdept / Transfers & Debt</td><td>$10.3M</td><td>→</td>
+          </tr>
+          <tr class="clickable" data-detail="supplies">
+            <td>Supplies & Other</td><td>$3.2M</td><td>→</td>
+          </tr>
+        </table>
+        <div id="detail-contract" class="detail-panel">
+          <strong>Contractual Services — $54.1M</strong><br>
+          Largest category. Includes contracted public safety (Police ~$23.9M and Fire ~$15.3M are largely contract-based), professional services, maintenance contracts, and other outsourced work.
+        </div>
+        <div id="detail-personnel" class="detail-panel">
+          <strong>Salaries + Benefits — $24.0M</strong><br>
+          Direct city staff: Salaries ~$16.4M + Benefits ~$7.5M. Covers remaining in-house positions across departments (administration, community development, public works, recreation, marine safety, etc.).
+        </div>
+        <div id="detail-capital" class="detail-panel">
+          <strong>Capital Outlay — $7.5M</strong><br>
+          Project and equipment spending. Ties heavily to the Capital Improvement Program (80 projects planned for FY 2026/27–2027/28 across beaches/parks, streets, drainage, facilities, and utilities).
+        </div>
+        <div id="detail-inter" class="detail-panel">
+          <strong>Interdepartmental / Transfers & Debt — ~$10.3M</strong><br>
+          Internal allocations between funds plus debt service and transfers out (including to enterprise funds and capital reserves).
+        </div>
+        <div id="detail-supplies" class="detail-panel">
+          <strong>Supplies & Other — ~$3.2M</strong><br>
+          Materials, utilities, and miscellaneous operating costs.
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Expenditures by Department</h3>
+        <p class="muted">Click a department for more detail</p>
+        <table>
+          <tr><th>Department</th><th>FY 2026 Budget</th><th></th></tr>
+          <tr class="clickable" data-detail="dept-police">
+            <td>Police</td><td>$23.9M</td><td>→</td>
+          </tr>
+          <tr class="clickable" data-detail="dept-fire">
+            <td>Fire</td><td>$15.3M</td><td>→</td>
+          </tr>
+          <tr class="clickable" data-detail="dept-pw">
+            <td>Public Works</td><td>$26.9M</td><td>→</td>
+          </tr>
+          <tr class="clickable" data-detail="dept-cd">
+            <td>Community Development</td><td>$10.0M</td><td>→</td>
+          </tr>
+          <tr class="clickable" data-detail="dept-bpr">
+            <td>Beaches, Parks & Recreation</td><td>$6.8M</td><td>→</td>
+          </tr>
+          <tr class="clickable" data-detail="dept-other">
+            <td>General Government / Other</td><td>~$16.0M</td><td>→</td>
+          </tr>
+        </table>
+        <div id="detail-dept-police" class="detail-panel">
+          <strong>Police — $23.9M</strong><br>
+          Primarily contractual services for law enforcement. One of the two largest public-safety line items.
+        </div>
+        <div id="detail-dept-fire" class="detail-panel">
+          <strong>Fire — $15.3M</strong><br>
+          Contracted fire protection services. Together with Police, public safety is a major share of the General Fund.
+        </div>
+        <div id="detail-dept-pw" class="detail-panel">
+          <strong>Public Works — $26.9M</strong><br>
+          Engineering, maintenance, streets, parks maintenance, and related operations. Significant capital and contractual activity lives here.
+        </div>
+        <div id="detail-dept-cd" class="detail-panel">
+          <strong>Community Development — $10.0M</strong><br>
+          Planning, building, code compliance, and related development services.
+        </div>
+        <div id="detail-dept-bpr" class="detail-panel">
+          <strong>Beaches, Parks & Recreation — $6.8M</strong><br>
+          Beach and park maintenance, recreation programs, and related facilities. Strongly tied to the city’s coastal identity and CIP projects.
+        </div>
+        <div id="detail-dept-other" class="detail-panel">
+          <strong>General Government / Other — ~$16M</strong><br>
+          City Council, City Manager, City Clerk, Finance, Human Resources, Economic Development, Marine Safety, and other central functions.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Sources & Notes</h3>
+      <p>Data drawn from City of San Clemente quarterly financial reports and the Annual Comprehensive Financial Report (ACFR) for the year ended June 30, 2025. All figures are approximate and rounded for this prototype.</p>
+      <p class="muted">A production version would pull structured data or regularly updated extracts so the numbers stay current and support year-over-year comparison.</p>
+    </div>
+  </section>
+</div>
+
+<footer>
+  San Clemente Civic · Budget Explorer Prototype · Public data only · Not an official city site
+</footer>
+
+<script>
+// Tab switching
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const view = tab.dataset.view;
+    document.getElementById('revenue-view').style.display = view === 'revenue' ? 'block' : 'none';
+    document.getElementById('expenditures-view').style.display = view === 'expenditures' ? 'block' : 'none';
+  });
+});
+
+// Clickable detail panels
+document.querySelectorAll('.clickable').forEach(row => {
+  row.addEventListener('click', () => {
+    const id = 'detail-' + row.dataset.detail;
+    const panel = document.getElementById(id);
+    const card = row.closest('.card');
+    card.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('show'));
+    if (panel) panel.classList.toggle('show');
+  });
+});
+
+// Charts
+const revenueChart = new Chart(document.getElementById('revenueChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Property Tax', 'Sales Tax', 'Other Taxes / TOT', 'Service Charges', 'Interfund & Other'],
+    datasets: [{
+      data: [48.2, 13.2, 7.2, 7.6, 13.6],
+      backgroundColor: ['#0d4f6b', '#2a7a9b', '#7eb8a8', '#a8d4c8', '#c5d8dc']
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { labels: { color: '#1a2e35' } },
+      tooltip: { callbacks: { label: ctx => ctx.label + ': $' + ctx.raw + 'M' } }
+    },
+    cutout: '55%',
+    onClick: (e, elements) => {
+      if (elements.length) {
+        const idx = elements[0].index;
+        const keys = ['prop', 'sales', 'other-tax', 'services', 'other-rev'];
+        const panel = document.getElementById('detail-' + keys[idx]);
+        document.querySelectorAll('#revenue-view .detail-panel').forEach(p => p.classList.remove('show'));
+        if (panel) panel.classList.add('show');
+      }
+    }
+  }
+});
+
+const expChart = new Chart(document.getElementById('expChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Contractual Services', 'Salaries + Benefits', 'Capital Outlay', 'Interdept / Transfers', 'Supplies & Other'],
+    datasets: [{
+      label: 'Approx. $M',
+      data: [54.1, 24.0, 7.5, 10.3, 3.2],
+      backgroundColor: '#0d4f6b'
+    }]
+  },
+  options: {
+    plugins: { legend: { labels: { color: '#1a2e35' } } },
+    scales: {
+      x: { ticks: { color: '#5a6f76' }, grid: { color: '#e8f4f0' } },
+      y: { ticks: { color: '#5a6f76' }, grid: { color: '#e8f4f0' } }
+    },
+    onClick: (e, elements) => {
+      if (elements.length) {
+        const idx = elements[0].index;
+        const keys = ['contract', 'personnel', 'capital', 'inter', 'supplies'];
+        const panel = document.getElementById('detail-' + keys[idx]);
+        document.querySelectorAll('#expenditures-view .detail-panel').forEach(p => p.classList.remove('show'));
+        if (panel) panel.classList.add('show');
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
