@@ -1,1 +1,154 @@
-REAL_CONTENT
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — San Clemente Citizen</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ocean: #0d4f6b;
+  --deep: #083445;
+  --sand: #f4e8d0;
+  --seafoam: #7eb8a8;
+  --foam: #e8f4f0;
+  --text: #1a2e35;
+  --muted: #5a6f76;
+  --accent: #2a7a9b;
+  --card: #ffffff;
+  --border: #d4e4e8;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--sand); color: var(--text); font-family: 'Inter', system-ui, sans-serif; line-height: 1.5; }
+h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; margin: 0 0 0.5em; color: var(--ocean); }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+header { background: var(--ocean); color: white; padding: 1.25rem 1.25rem 0.75rem; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+header h1 { color: white; margin: 0; }
+header p { margin: 0.25rem 0 0.75rem; opacity: 0.9; font-size: 0.95rem; }
+.container { max-width: 1100px; margin: 0 auto; padding: 1.25rem; }
+nav { display: flex; gap: 0.5rem; flex-wrap: wrap; padding-bottom: 0.75rem; }
+nav a { color: white; font-weight: 500; padding: 0.45rem 0.9rem; border-radius: 20px; background: rgba(255,255,255,0.12); }
+nav a.active, nav a:hover { background: var(--seafoam); color: var(--deep); }
+.section { margin: 2rem 0; }
+.card { background: var(--card); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(13,79,107,0.06); }
+.muted { color: var(--muted); font-size: 0.9rem; }
+.tag { display: inline-block; background: var(--foam); color: var(--ocean); padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.8rem; font-weight: 500; margin-right: 0.4rem; }
+.filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.filter-btn { padding: 0.45rem 0.9rem; border-radius: 20px; background: var(--foam); border: none; cursor: pointer; font-weight: 500; color: var(--ocean); }
+.filter-btn.active { background: var(--ocean); color: white; }
+.project { cursor: pointer; transition: transform 0.1s; }
+.project:hover { transform: translateY(-1px); }
+.detail { display: none; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+.detail.open { display: block; }
+@media (min-width: 700px) { .project-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; } }
+footer { text-align: center; padding: 2rem 1rem; color: #c8d8dc; font-size: 0.85rem; background: var(--deep); margin-top: 3rem; }
+</style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <h1>San Clemente Citizen</h1>
+    <p>Projects & Capital Improvements</p>
+    <nav>
+      <a href="index.html">Budget</a>
+      <a href="projects.html" class="active">Projects</a>
+      <a href="permits.html">Permits</a>
+      <a href="meetings.html">Meetings</a>
+      <a href="events.html">Events</a>
+      <a href="businesses.html">New Businesses</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <section class="section">
+    <h2>Capital Improvement & Construction Projects</h2>
+    <p class="muted">Compiled from CIP packages, PlanetBids notices, and City Council agenda award / notice-of-completion items. Click a card for more detail or a link to the source document.</p>
+
+    <div class="filters">
+      <button class="filter-btn active" data-cat="all">All</button>
+      <button class="filter-btn" data-cat="streets">Streets</button>
+      <button class="filter-btn" data-cat="beaches">Beaches / Parks</button>
+      <button class="filter-btn" data-cat="drainage">Drainage</button>
+      <button class="filter-btn" data-cat="sewer">Sewer / Water</button>
+      <button class="filter-btn" data-cat="facilities">Facilities</button>
+      <button class="filter-btn" data-cat="bridges">Bridges / Trails</button>
+    </div>
+
+    <div class="project-grid" id="project-grid"></div>
+
+    <div class="card">
+      <h3>Sources & Notes</h3>
+      <p>Projects drawn from City of San Clemente CIP packages, PlanetBids bid notices, and City Council agenda staff reports / notices of completion. Where detailed narrative is limited, the card links to the official document. Not an official city site.</p>
+    </div>
+  </section>
+</div>
+
+<footer>
+  San Clemente Citizen · Projects · Public data only · Not an official city site
+</footer>
+
+<script>
+const projects = [
+  { id: '23802', name: 'Montalvo & Riviera Pedestrian Bridges Coating Replacement', cat: 'bridges', tags: ['Bridges / Trails', 'Maintenance'], summary: 'Remove existing coating, sandblast, prepare, and recoat the Montalvo and Riviera pedestrian bridges on the Beach Trail near the OCTA Metrolink bridge.', detail: 'CIP Project No. 23802. Located ~200 ft west of Avenida Montalvo & Avenida Lobeiro. Bid in 2023–2024; awards reported in the ~$387k–$540k range. Contract time 40–60 working days.', link: 'https://www.picketfencemedia.com/sanclementetimes/legal-notices/city-of-san-clemente-notice-inviting-bids/article_e8deb503-fcd1-576e-a729-c5d93e508180.html', linkText: 'Notice Inviting Bids' },
+  { id: 'sand', name: 'Army Corps Sand Replenishment', cat: 'beaches', tags: ['Beaches / Parks', 'Capital'], summary: 'Federal/state/local coastal storm damage reduction project. Places sand on the beach near the pier on a multi-year cycle.', detail: 'PED phase scheduled for 2026/27; construction later subject to funding. Multi-year total estimate ~$25.5M.', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2298?fileID=13698', linkText: 'CIP Package (agenda)' },
+  { id: 'golf-irr', name: 'Muni Golf Course Irrigation System Replacement', cat: 'beaches', tags: ['Beaches / Parks', 'Capital'], summary: 'Multi-phase replacement of the aging irrigation system to improve water efficiency and reliability.', detail: 'Total estimate ~$6.25M. Target completion Spring 2028.', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2298?fileID=13698', linkText: 'CIP Package (agenda)' },
+  { id: 'victoria', name: 'Avenida Victoria Sidewalk Widening (Pier Underpass)', cat: 'streets', tags: ['Streets', 'Capital'], summary: 'Widen sidewalk at the pier trolley stop / underpass to improve accessibility and reduce pedestrian-vehicle conflicts.', detail: 'Partial funding from PierPride Foundation. Total estimate ~$850K. Target Spring 2028.', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2298?fileID=13698', linkText: 'CIP Package (agenda)' },
+  { id: 'arterial', name: 'Arterial Street Improvement Program', cat: 'streets', tags: ['Streets', 'Capital'], summary: 'Citywide arterial rehabilitation (reconstruction of deteriorated areas, crack fill, overlay/slurry/micro).', detail: 'Recent example: FY 2026 program (CIP 16317) awarded to American Asphalt South; construction cost ~$603K. Ongoing annual programs in the $750K range.', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2129?fileID=12699', linkText: 'Notice of Completion example' },
+  { id: 'calafia', name: 'Calafia Complete Streets', cat: 'streets', tags: ['Streets', 'Capital'], summary: 'Bike lane/path and sidewalk improvements along Avenida Calafia from Del Presidente to the State Parks lot.', detail: 'Total estimate ~$1.15M. Target Spring 2027.', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2298?fileID=13698', linkText: 'CIP Package (agenda)' },
+  { id: 'poche', name: 'Poche Beach Water Reclamation Project', cat: 'drainage', tags: ['Drainage', 'Capital'], summary: 'Replace UV system with dry-weather diversion to outfall for bacteria control and sea-level-rise resilience.', detail: 'Total estimate ~$5.1M. Target Fall 2029.', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2298?fileID=13698', linkText: 'CIP Package (agenda)' },
+  { id: 'grit', name: 'Headworks Grit Cyclone Replacement', cat: 'sewer', tags: ['Sewer / Water', 'Capital'], summary: 'Replace aging grit removal equipment at the wastewater treatment plant headworks.', detail: 'Total estimate ~$1.1M. Target Spring 2028.', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2298?fileID=13698', linkText: 'CIP Package (agenda)' },
+  { id: 'steed', name: 'Steed Park Parking Lot Expansion', cat: 'beaches', tags: ['Beaches / Parks', 'Capital'], summary: 'Add ~168 parking spaces plus circulation, ADA, drainage, and landscaping improvements.', detail: 'Total estimate ~$1.05M. Target Spring 2028.', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2298?fileID=13698', linkText: 'CIP Package (agenda)' },
+  { id: 'tierra', name: 'Tierra Grande Park Playground Replacement', cat: 'beaches', tags: ['Beaches / Parks', 'Capital'], summary: 'Remove and replace playground equipment with safety surfacing and ADA enhancements.', detail: 'Total estimate ~$325K. Target Summer 2027.', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2298?fileID=13698', linkText: 'CIP Package (agenda)' },
+  { id: 'northbeach', name: 'North Beach Train Station Upgrades', cat: 'streets', tags: ['Streets', 'Capital'], summary: 'New pedestrian crosswalk with warning devices at Avenida Pico & Calle Deshecha, plus sidewalk bulb-outs and ADA ramps.', detail: 'SCAG FTIP grant support. Total estimate ~$960K. Target Spring 2028.', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2298?fileID=13698', linkText: 'CIP Package (agenda)' },
+  { id: '17407', name: 'Camino Vera Cruz Recycled Water Line Extension', cat: 'sewer', tags: ['Sewer / Water', 'Capital'], summary: '~402 linear feet of recycled water line plus three irrigation meters to serve Forster Ranch HOA areas.', detail: 'CIP Project No. 17407. Awarded to Q&E Pipeline Company for $507,000. Notice of Completion filed (completion July 1, 2026).', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2374?fileID=14319', linkText: 'Notice of Completion' },
+  { id: '15325', name: 'FY 2025 Street Rehabilitation Program', cat: 'streets', tags: ['Streets', 'Capital'], summary: 'Citywide street rehabilitation work (pavement, concrete, sidewalks, ramps, etc.).', detail: 'CIP Project No. 15325. Awarded to L.C. Paving & Sealing, Inc. Total construction cost ~$1.025M. Notice of Completion accepted November 2025.', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/1363?fileID=6377', linkText: 'Notice of Completion' },
+  { id: '21208', name: 'Marquita Slope Interim Reconstruct', cat: 'facilities', tags: ['Facilities', 'Capital'], summary: 'Interim slope reconstruction to protect the Linda Lane Pump Station (emergency coastal development permit).', detail: 'CIP Project No. 21208. Awarded to Alliance Diversified Enterprises. Notice of Completion filed (completion May 2026).', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2320?fileID=13917', linkText: 'Notice of Completion' },
+  { id: '13411', name: 'Pico / Presidio DIP Replacement Phase II', cat: 'sewer', tags: ['Sewer / Water', 'Capital'], summary: 'Replacement of existing water pipeline at the end of its useful life (Gateway Village Plaza area).', detail: 'CIP Project No. 13411. Awarded to Big Ben, Inc. Notice of Completion filed (completion June 16, 2026).', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2320?fileID=13941', linkText: 'Notice of Completion' },
+  { id: '17353', name: 'FY 2027 Local Street Improvement Program', cat: 'streets', tags: ['Streets', 'Capital'], summary: 'Local street improvements including pavement repairs and related work.', detail: 'CIP Project No. 17353. Awarded to L.C. Paving & Sealing, Inc. for $1,243,113.', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2420?fileID=14661', linkText: 'Award agenda item' },
+  { id: '14811', name: 'San Luis Rey Park Restroom Rehabilitation', cat: 'beaches', tags: ['Beaches / Parks', 'Capital'], summary: 'Rehabilitate restrooms and improve accessibility (parking, walkways, fencing, exterior).', detail: 'CIP Project No. 14811. Bid solicitation posted; Class B license required; 85 working days.', link: 'https://app.govly.com/public/opportunities/17193950', linkText: 'Bid notice' },
+  { id: '30017', name: 'Storm Drain Improvements at East Avenida Cordoba & Via Avila', cat: 'drainage', tags: ['Drainage', 'Capital'], summary: 'Replace catch basins, local depressions, cross gutter, pavement, and install new RCP storm drain.', detail: 'Invitation #30017. Bid due May 20, 2026.', link: 'https://vendors.planetbids.com/portal/28939/bo/bo-detail/140004', linkText: 'PlanetBids' },
+  { id: '16322', name: 'FY 2026 Local Street Improvement Program', cat: 'streets', tags: ['Streets', 'Capital'], summary: 'Pavement improvements on various local streets (crack fill, slurry seal, re-striping).', detail: 'CIP Project No. 16322. Awarded to All American Asphalt for $571,935. Notice of Completion filed.', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2401?fileID=14542', linkText: 'Notice of Completion' },
+  { id: '27309', name: 'FY 2027 Major Street Maintenance', cat: 'streets', tags: ['Streets', 'Maintenance'], summary: 'Asphalt pavement repairs, re-striping, and manhole adjustments on major streets.', detail: 'CIP Project No. 27309. Awarded to Eagle Paving LLC for $327,000.', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2420?fileID=14660', linkText: 'Award agenda item' },
+  { id: '12003', name: 'Catch Basin & Storm Drain Improvements at Avenida Presidio & Calle Miguel', cat: 'drainage', tags: ['Drainage', 'Capital'], summary: 'Catch basin and storm drain improvements at the intersection of Avenida Presidio and Calle Miguel.', detail: 'CIP Project No. 12003. Awarded to Torres Sanitation Systems Construction for up to $465,150. Notice of Completion filed (completion August 21, 2026).', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2420?fileID=14659', linkText: 'Notice of Completion' },
+  { id: '17144', name: 'Lifeguard Towers Replacement (2026)', cat: 'beaches', tags: ['Beaches / Parks', 'Capital'], summary: 'Replacement of two lifeguard towers nearing the end of their useful life.', detail: 'CIP Project No. 17144. Awarded to Pantheon Diversified, Inc. for $82,998.', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2420?fileID=14626', linkText: 'Award agenda item' },
+  { id: '15318', name: 'FY 2025 As-Needed Street Improvement Program', cat: 'streets', tags: ['Streets', 'Maintenance'], summary: 'As-needed street improvements on various streets.', detail: 'CIP Project No. 15318. Awarded to Hardy & Harper, Inc. Total construction cost ~$191,600. Notice of Completion filed (completion January 21, 2026).', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2213?fileID=13145', linkText: 'Notice of Completion' },
+  { id: '16318', name: 'FY 2026 As-Needed Street Improvement Program (Striping)', cat: 'streets', tags: ['Streets', 'Maintenance'], summary: 'As-needed striping services throughout the city.', detail: 'CIP Project No. 16318. Awarded to WGJ Enterprises, Inc. for up to $75,000 per year (with renewal options).', link: 'https://www.sanclemente.gov/AgendaCenter/ViewFile/Item/2129?fileID=12700', linkText: 'Award agenda item' }
+];
+
+function renderProjects(filter) {
+  const grid = document.getElementById('project-grid');
+  grid.innerHTML = '';
+  projects.filter(p => filter === 'all' || p.cat === filter).forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'card project';
+    card.innerHTML = `
+      <div>${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      <h3>${p.name}</h3>
+      <p>${p.summary}</p>
+      <div class="detail" id="detail-${p.id}">
+        <p>${p.detail}</p>
+        <p><a href="${p.link}" target="_blank" rel="noopener">${p.linkText} →</a></p>
+      </div>
+    `;
+    card.onclick = (e) => {
+      if (e.target.tagName === 'A') return;
+      document.getElementById('detail-' + p.id).classList.toggle('open');
+    };
+    grid.appendChild(card);
+  });
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderProjects(btn.dataset.cat);
+  };
+});
+
+renderProjects('all');
+</script>
+</body>
+</html>
